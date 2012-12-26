@@ -17,7 +17,7 @@
 #define ATRACE_TAG ATRACE_TAG_GRAPHICS
 
 // Uncomment this to remove support for HWC_DEVICE_API_VERSION_0_3 and older
-#define HWC_REMOVE_DEPRECATED_VERSIONS 1
+// #define HWC_REMOVE_DEPRECATED_VERSIONS 1
 
 #include <stdint.h>
 #include <stdio.h>
