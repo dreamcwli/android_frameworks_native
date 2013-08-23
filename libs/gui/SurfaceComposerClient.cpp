@@ -644,6 +644,17 @@ status_t ScreenshotClient::update(const sp<IBinder>& display,
         uint32_t minLayerZ, uint32_t maxLayerZ) {
     sp<ISurfaceComposer> s(ComposerService::getComposerService());
     if (s == NULL) return NO_INIT;
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+    mHeap = 0;
+    status_t err = s->captureScreen(display, &mHeap,
+            &mBuffer.width, &mBuffer.height, &mBuffer.format, reqWidth, reqHeight,
+            minLayerZ, maxLayerZ);
+
+    if (err == NO_ERROR) {
+        mBuffer.data = (uint8_t *)mHeap->getBase();
+        mBuffer.stride = mBuffer.width;
+    }
+#else
     sp<CpuConsumer> cpuConsumer = getCpuConsumer();
 
     if (mHaveBuffer) {
@@ -661,6 +672,7 @@ status_t ScreenshotClient::update(const sp<IBinder>& display,
             mHaveBuffer = true;
         }
     }
+#endif
     return err;
 }
 
@@ -674,12 +686,16 @@ status_t ScreenshotClient::update(const sp<IBinder>& display,
 }
 
 void ScreenshotClient::release() {
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+    mHeap = 0;
+#else
     if (mHaveBuffer) {
         mCpuConsumer->unlockBuffer(mBuffer);
         memset(&mBuffer, 0, sizeof(mBuffer));
         mHaveBuffer = false;
     }
     mCpuConsumer.clear();
+#endif
 }
 
 void const* ScreenshotClient::getPixels() const {

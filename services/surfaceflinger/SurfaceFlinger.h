@@ -182,6 +182,13 @@ private:
     virtual bool authenticateSurfaceTexture(
         const sp<IGraphicBufferProducer>& bufferProducer) const;
     virtual sp<IDisplayEventConnection> createDisplayEventConnection();
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+    virtual status_t captureScreen(const sp<IBinder>& display,
+            sp<IMemoryHeap>* heap,
+            uint32_t* width, uint32_t* height, PixelFormat* format,
+            uint32_t reqWidth, uint32_t reqHeight, uint32_t minLayerZ,
+            uint32_t maxLayerZ);
+#endif
     virtual status_t captureScreen(const sp<IBinder>& display,
             const sp<IGraphicBufferProducer>& producer,
             uint32_t reqWidth, uint32_t reqHeight,
@@ -302,7 +309,12 @@ private:
 
     status_t captureScreenImplCpuConsumerLocked(
             const sp<const DisplayDevice>& hw,
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+            sp<IMemoryHeap>* heap,
+            uint32_t* width, uint32_t* height, PixelFormat* format,
+#else
             const sp<IGraphicBufferProducer>& producer,
+#endif
             uint32_t reqWidth, uint32_t reqHeight,
             uint32_t minLayerZ, uint32_t maxLayerZ);
 

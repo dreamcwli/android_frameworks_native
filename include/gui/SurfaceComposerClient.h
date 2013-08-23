@@ -39,6 +39,9 @@ namespace android {
 
 class DisplayInfo;
 class Composer;
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+class IMemoryHeap;
+#endif
 class ISurfaceComposerClient;
 class IGraphicBufferProducer;
 class Region;
@@ -164,6 +167,9 @@ public:
             uint32_t minLayerZ, uint32_t maxLayerZ);
 
 private:
+#ifdef ENABLE_HEAP_BASED_SCREEN_CAPTURE
+    sp<IMemoryHeap> mHeap;
+#endif
     mutable sp<CpuConsumer> mCpuConsumer;
     CpuConsumer::LockedBuffer mBuffer;
     bool mHaveBuffer;
